@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 let userModel = require("../schemas/users");
+let bcrypt = require("bcrypt");
 
 // enable user
 router.post("/enable", async function (req, res, next) {
@@ -77,15 +78,18 @@ router.post("/", async function (req, res, next) {
     }
 
     const existingUser = await userModel.findOne({ email });
+
     if (existingUser) {
       return res.status(400).json({
         message: "Email already exists!",
       });
     }
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
     const user = new userModel({
       username,
-      password,
+      password: hashedPassword,
       email,
       fullName,
       avatarUrl,

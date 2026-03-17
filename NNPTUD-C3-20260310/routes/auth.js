@@ -49,6 +49,12 @@ router.post("/login", async (req, res) => {
       },
     );
 
+    res.cookie("TOKEN_NNPTUD_C3", token, {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: "strict",
+    });
+
     res.json({
       message: "Login success",
       token: token,
@@ -58,6 +64,13 @@ router.post("/login", async (req, res) => {
       error: error.message,
     });
   }
+});
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("TOKEN_NNPTUD_C3");
+  res.json({
+    message: "Logout success",
+  });
 });
 
 function verifyToken(req, res, next) {
